@@ -9,6 +9,12 @@ A simple tool to help obtain fixture information from the FA Full-Time system.
 ## Installation
     composer require jadgray/full-time-api
     
+#### Basic information needed for a request
+
+To obtain information from the Full-Time system you will need a Season ID and Group ID, these can be obtained by visiting your desired deivison you'd like to access and extracting these from the URL.
+
+e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
+    
 #### Get a team list 
 
 ```php
