@@ -1,6 +1,6 @@
 {
   "name": "jadgray/full-time-api",
-  "description": "A simple PHP scraper for FA Full-Time Fixtures and results",
+  "description": "A simple tool to help obtain fixture information from the FA Full-Time system.",
   "license": "MIT",
   "keywords": ["Football Association", "Football", "API", "Football Fixtures", "Football Results"],
   "type": "library",

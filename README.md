@@ -11,7 +11,7 @@ A simple tool to help obtain fixture information from the FA Full-Time system.
     
 #### Basic information needed for a request
 
-To obtain information from the Full-Time system you will need a Season ID and Group ID, these can be obtained by visiting your desired deivison you'd like to access and extracting these from the URL.
+To obtain information from the Full-Time system you will need a Season ID and Group ID, these can be obtained by visiting your desired division you'd like to access and extracting these from the URL.
 
 e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
     
@@ -28,7 +28,7 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
 ```php
     use Jadgray\FullTimeApi\Division;
     
-    $teams = (new Division())->getFixtures(1234, '1_234');
+    $fixtures = (new Division())->getFixtures(1234, '1_234');
 ```
 
 #### Get formatted fixtures 
@@ -36,7 +36,7 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
 ```php
     use Jadgray\FullTimeApi\Division;
     
-    $teams = (new Division())->getFormattedFixtures(1234, '1_234');
+    $fixtures = (new Division())->getFormattedFixtures(1234, '1_234');
 ```
 
 #### Get unformatted results 
@@ -44,7 +44,7 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
 ```php
     use Jadgray\FullTimeApi\Division;
     
-    $teams = (new Division())->getResults(1234, '1_234');
+    $results = (new Division())->getResults(1234, '1_234');
 ```
 
 #### Get formatted results 
@@ -52,6 +52,6 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
 ```php
     use Jadgray\FullTimeApi\Division;
     
-    $teams = (new Division())->getFormattedResults(1234, '1_234');
+    $results = (new Division())->getFormattedResults(1234, '1_234');
 ```
 
