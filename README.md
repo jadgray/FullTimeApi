@@ -1,4 +1,5 @@
 # FullTimeApi
+[![PHP Unit Tests](https://github.com/jadgray/FullTimeApi/actions/workflows/phpunit.yml/badge.svg)](https://github.com/jadgray/FullTimeApi/actions/workflows/phpunit.yml)
 
 A simple tool to help obtain fixture information from the FA Full-Time system. 
 
