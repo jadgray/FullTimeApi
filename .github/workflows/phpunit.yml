@@ -1,9 +1,9 @@
-name: Run Unit Tests
+name: PHP Unit Tests
 
 on:
   push:
      branches:
-      - master
+      - main
   pull_request:
      branches: '*'
 
