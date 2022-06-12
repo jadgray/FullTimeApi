@@ -40,7 +40,7 @@ A simple tool to help obtain fixture information from the FA Full-Time system.
     $teams = (new Division())->getResults(1234, '1_234');
 ```
 
-#### Get unformatted results 
+#### Get formatted results 
 
 ```php
     use Jadgray\FullTimeApi\Division;
