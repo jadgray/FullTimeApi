@@ -22,6 +22,7 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
     
     $teams = (new Division())->getTeams(1234, '1_234');
 ```
+[Example output](https://github.com/jadgray/FullTimeApi/blob/main/tests/Divsion/TeamTest.php#L41-L55)
 
 #### Get unformatted fixtures 
 
@@ -31,6 +32,8 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
     $fixtures = (new Division())->getFixtures(1234, '1_234');
 ```
 
+[Example output](https://github.com/jadgray/FullTimeApi/blob/main/tests/DataFormatters/FixtureFormatterTest.php#L26-L66)
+
 #### Get formatted fixtures 
 
 ```php
@@ -38,6 +41,7 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
     
     $fixtures = (new Division())->getFormattedFixtures(1234, '1_234');
 ```
+[Example output](https://github.com/jadgray/FullTimeApi/blob/main/tests/DataFormatters/FixtureFormatterTest.php#L71-L96)
 
 #### Get unformatted results 
 
@@ -46,6 +50,7 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
     
     $results = (new Division())->getResults(1234, '1_234');
 ```
+[Example output](https://github.com/jadgray/FullTimeApi/blob/main/tests/DataFormatters/ResultFormatterTest.php#L26-L35)
 
 #### Get formatted results 
 
@@ -54,4 +59,4 @@ e.g. **selectedSeason=1234** & **FixtureGroupKey=1_234**
     
     $results = (new Division())->getFormattedResults(1234, '1_234');
 ```
-
+[Example output](https://github.com/jadgray/FullTimeApi/blob/main/tests/DataFormatters/ResultFormatterTest.php#L40-L89)
