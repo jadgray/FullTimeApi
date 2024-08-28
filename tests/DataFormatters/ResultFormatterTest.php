@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\DataFormatters;
+namespace DataFormatters;
 
 use Jadgray\FullTimeApi\DataFormatters\ResultFormatter;
 use PHPUnit\Framework\TestCase;

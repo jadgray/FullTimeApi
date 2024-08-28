@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Division;
 
 use Jadgray\FullTimeApi\Division\Teams;
 use Mockery;
