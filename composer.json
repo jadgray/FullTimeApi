@@ -15,9 +15,15 @@
     "source": "https://github.com/jadgray/FullTimeApi"
   },
   "require": {
-    "php": ">=7.2",
-    "fabpot/goutte": "^3.2",
-    "nesbot/carbon": "^1.39"
+    "php": "^8.1",
+    "nesbot/carbon": "^3.0",
+    "ext-dom": "*",
+    "ext-libxml": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0.0 ",
+    "mockery/mockery": "^1.6",
+    "phpstan/phpstan": "^1.12"
   },
   "autoload": {
     "psr-4": {
@@ -28,9 +34,5 @@
     "allow-plugins": {
       "kylekatarnls/update-helper": true
     }
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^6.5",
-    "mockery/mockery": "^1.3"
   }
 }

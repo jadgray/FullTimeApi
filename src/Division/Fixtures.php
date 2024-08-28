@@ -2,47 +2,60 @@
 
 namespace Jadgray\FullTimeApi\Division;
 
-use Goutte\Client;
-use Symfony\Component\DomCrawler\Crawler;
+use DOMNode;
+use DOMXPath;
+use Jadgray\FullTimeApi\FullTimeClient;
+use Jadgray\FullTimeApi\Traits\XpathTrait;
 
 class Fixtures
 {
-    /***
-     * @var Client
-     */
-    private $client;
+    use XpathTrait;
 
-    public function __construct()
+    public function __construct(private readonly FullTimeClient $client)
     {
-        $this->client = new Client();
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @return Crawler
-     */
-    public function getFixtures(int $seasonId, string $groupId): Crawler
+    public function getFixtures(int $seasonId, string $groupId): array
     {
-        return $this->client->request('GET', sprintf(
+        $url = sprintf(
             'https://fulltime.thefa.com/fixtures.html?selectedSeason=%s&selectedFixtureGroupKey=%s&selectedDateCode=all&selectedRelatedFixtureOption=1&previousSelectedFixtureGroupKey=%s&itemsPerPage=10000',
-                $seasonId,
-                $groupId,
-                $groupId
-            ));
+            $seasonId,
+            $groupId,
+            $groupId
+        );
+
+        $data = $this->client->get($url);
+
+        return $this->extractFixtures($data);
     }
 
-    /**
-     * @param Crawler $fixtures
-     * @return array
-     */
-    public function extractFixtures(Crawler $fixtures): array
+    private function extractFixtures(string $data): array
     {
-        return $fixtures->filter('table')->filter('tr')->each(function ($tr) {
-            return $tr->filter('td')->each(function ($td) {
-                $trim = trim($td->text());
-                return str_replace(array("\n", "\r"), '', $trim);
-            });
-        });
+        $xpath = $this->createDomXPath($data);
+        $rows = $xpath->query('//table//tr');
+        $fixtures = [];
+
+        foreach ($rows as $row) {
+            $fixture = $this->extractFixtureFromRow($xpath, $row);
+
+            if (!empty($fixture)) {
+                $fixtures[] = $fixture;
+            }
+        }
+
+        return $fixtures;
+    }
+
+    private function extractFixtureFromRow(DOMXPath $xpath, DOMNode $row): array
+    {
+        $cells = $xpath->query('td', $row);
+
+        return array_map(static function ($cell) {
+            $trimmedText = trim($cell->textContent);
+            $normalizedText = str_replace(["\n", "\r"], '', $trimmedText);
+
+            // Replace multiple spaces with a single space
+            return preg_replace('/\s+/', ' ', $normalizedText);
+        }, iterator_to_array($cells));
     }
 }

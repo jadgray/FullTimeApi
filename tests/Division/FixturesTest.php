@@ -3,45 +3,50 @@
 namespace Division;
 
 use Jadgray\FullTimeApi\Division\Fixtures;
+use Jadgray\FullTimeApi\FullTimeClient;
 use Mockery;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 class FixturesTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
 
-        $example_file = file_get_contents(__DIR__ . '/../Examples/example_fixtures.html');
-
-        $this->crawler = new Crawler($example_file);
-    }
-
+    /**
+     * @throws Exception
+     */
     public function testGettingFixturesFromFullTime(): void
     {
-        $getFixtures = Mockery::mock(Fixtures::class);
+        $seasonId = 2023;
+        $groupId = 'groupA';
+        $expectedUrl = 'https://fulltime.thefa.com/fixtures.html?selectedSeason=2023&selectedFixtureGroupKey=groupA&selectedDateCode=all&selectedRelatedFixtureOption=1&previousSelectedFixtureGroupKey=groupA&itemsPerPage=10000';
+        $expectedResponse = file_get_contents(__DIR__ . '/../Examples/example_fixtures.html');
 
-        $getFixtures->shouldReceive('getFixtures')->andReturn($this->crawler);
+        $clientMock = $this->createMock(FullTimeClient::class);
+        $clientMock->expects($this->once())
+            ->method('get')
+            ->with($expectedUrl)
+            ->willReturn($expectedResponse);
 
-        $fixtures = $getFixtures->getFixtures(1, 1);
+        $fixtures = new Fixtures($clientMock);
 
-        $this->assertEquals(Crawler::class, get_class($fixtures));
-    }
+        $fixtureData = $fixtures->getFixtures($seasonId, $groupId);
 
-    public function testTheExtractionOfFixturesFromExample(): void
-    {
-        $fixtureClass = new Fixtures();
+        $this->assertIsArray($fixtureData);
+        $this->assertCount(7, $fixtureData);
 
-        $fixtures = $fixtureClass->extractFixtures($this->crawler);
+        $expectedCounts = [10, 10, 10, 10, 10, 10, 10];
 
-        $this->assertEquals($this->expectedArray(), $fixtures);
+        foreach ($fixtureData as $index => $fixture) {
+            $this->assertCount($expectedCounts[$index], $fixture);
+        }
+
+        $this->assertEquals($this->expectedArray(), $fixtureData);
     }
 
     private function expectedArray(): array
     {
         return [
-            [],
             [
                 'L',
                 '05/02/22 09:10',
