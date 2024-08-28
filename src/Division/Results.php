@@ -2,67 +2,69 @@
 
 namespace Jadgray\FullTimeApi\Division;
 
-use Goutte\Client;
-use Symfony\Component\DomCrawler\Crawler;
+use DOMNode;
+use DOMXPath;
+use Jadgray\FullTimeApi\FullTimeClient;
+use Jadgray\FullTimeApi\Helpers\StringHelper;
+use Jadgray\FullTimeApi\Traits\XpathTrait;
 
 class Results
 {
-    /**
-     * @var Client
-     */
-    private $client;
+    use XpathTrait;
 
-    public function __construct()
+    public function __construct(private readonly FullTimeClient $client)
     {
-        $this->client = new Client();
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @return Crawler
-     */
-    public function getResults(int $seasonId, string $groupId): Crawler
+    public function getResults(int $seasonId, string $groupId): array
     {
-        return $this->client->request('GET',
+        $data = $this->client->get(
             sprintf(
                 'https://fulltime.thefa.com/results.html?selectedSeason=%s&selectedFixtureGroupKey=%s&selectedDateCode=all&selectedRelatedFixtureOption=1&previousSelectedFixtureGroupKey=%s&itemsPerPage=10000',
                 $seasonId,
                 $groupId,
                 $groupId
             ));
+
+        return $this->extractResults($data);
     }
 
-    /**
-     * @param Crawler $fixtures
-     * @return array
-     */
-    public function extractResults(Crawler $fixtures): array
+    public function extractResults(string $data): array
     {
-        $results = $fixtures->filterXPath('//*[@id="results-list"]/div/div[3]/div/div[2]')->filter('div')->each(function ($div) {
-            return $div->children()->each(function ($result) {
-                return $result->html();
-            });
-        });
+        $xpath = $this->createDomXPath($data);
+        $resultNodes = $xpath->query('//*[@id="results-list"]/div/div[3]/div/div[2]/div');
 
         $fixtureResults = [];
 
-        foreach ($results[0] as $item) {
-            $crawler = new Crawler($item);
-            $fixtureDateTime = $crawler->filter('.datetime-col')->first()->text();
-            $homeTeam = $crawler->filter('.home-team-col')->first()->text();
-            $awayTeam = $crawler->filter('.road-team-col')->first()->text();
-            $score = $crawler->filter('.score-col')->first()->text();
-            $division = $crawler->filter('.fg-col')->first()->text();
-
-            $fixtureResults[] = [
-                $fixtureDateTime,
-                $homeTeam,
-                $score,
-                $awayTeam,
-                $division
-            ];
+        foreach ($resultNodes as $node) {
+            $fixtureResults[] = $this->extractFixtureResult($xpath, $node);
         }
+
         return $fixtureResults;
     }
+
+    private function extractFixtureResult(DOMXPath $xpath, DOMNode $node): array
+    {
+        $fixtureDateTime = StringHelper::removeWhitespace($this->extractNodeContent($xpath, $node, './/div[contains(@class, "datetime-col")]'));
+        $homeTeam = $this->extractNodeContent($xpath, $node, './/div[contains(@class, "home-team-col")]');
+        $awayTeam = $this->extractNodeContent($xpath, $node, './/div[contains(@class, "road-team-col")]');
+        $score = $this->extractNodeContent($xpath, $node, './/div[contains(@class, "score-col")]');
+        $division = $this->extractNodeContent($xpath, $node, './/div[contains(@class, "fg-col")]');
+
+        return [
+            $fixtureDateTime,
+            $homeTeam,
+            $score,
+            $awayTeam,
+            $division,
+        ];
+    }
+
+    private function extractNodeContent(DOMXPath $xpath, DOMNode $contextNode, string $query): string
+    {
+        $node = $xpath->query($query, $contextNode)->item(0);
+
+        return $node ? trim($node->textContent) : '';
+    }
+
 }

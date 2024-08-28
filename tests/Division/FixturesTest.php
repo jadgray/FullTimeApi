@@ -15,7 +15,7 @@ class FixturesTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGettingFixturesFromFullTime(): void
+    public function test_getting_fixtures_from_full_time(): void
     {
         $seasonId = 2023;
         $groupId = 'groupA';

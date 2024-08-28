@@ -5,6 +5,7 @@ namespace Jadgray\FullTimeApi\Division;
 use DOMNode;
 use DOMXPath;
 use Jadgray\FullTimeApi\FullTimeClient;
+use Jadgray\FullTimeApi\Helpers\StringHelper;
 use Jadgray\FullTimeApi\Traits\XpathTrait;
 
 class Fixtures
@@ -51,11 +52,7 @@ class Fixtures
         $cells = $xpath->query('td', $row);
 
         return array_map(static function ($cell) {
-            $trimmedText = trim($cell->textContent);
-            $normalizedText = str_replace(["\n", "\r"], '', $trimmedText);
-
-            // Replace multiple spaces with a single space
-            return preg_replace('/\s+/', ' ', $normalizedText);
+            return StringHelper::removeWhitespace($cell->textContent);
         }, iterator_to_array($cells));
     }
 }

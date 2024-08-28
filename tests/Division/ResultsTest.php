@@ -3,39 +3,34 @@
 namespace Division;
 
 use Jadgray\FullTimeApi\Division\Results;
-use Mockery;
+use Jadgray\FullTimeApi\FullTimeClient;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DomCrawler\Crawler;
 
 class ResultsTest extends TestCase
 {
-    public function setUp(): void
+    /**
+     * @throws Exception
+     */
+    public function test_getting_results_from_full_time(): void
     {
-        parent::setUp();
+        $seasonId = 2023;
+        $groupId = '1_abcbcbcbc';
+        $expectedUrl = 'https://fulltime.thefa.com/results.html?selectedSeason=2023&selectedFixtureGroupKey=1_abcbcbcbc&selectedDateCode=all&selectedRelatedFixtureOption=1&previousSelectedFixtureGroupKey=1_abcbcbcbc&itemsPerPage=10000';
+        $expectedResponse = file_get_contents(__DIR__ . '/../Examples/example_results.html');
 
-        $example_file = file_get_contents(__DIR__ . '/../Examples/example_results.html');
+        $clientMock = $this->createMock(FullTimeClient::class);
+        $clientMock->expects($this->once())
+            ->method('get')
+            ->with($expectedUrl)
+            ->willReturn($expectedResponse);
 
-        $this->crawler = new Crawler($example_file);
-    }
+        $results = new Results($clientMock);
 
-    public function testGettingFixturesFromFullTime(): void
-    {
-        $getResults = Mockery::mock(Results::class);
+        $resultData = $results->getResults($seasonId, $groupId);
 
-        $getResults->shouldReceive('getResults')->andReturn($this->crawler);
-
-        $results = $getResults->getResults(1, 1);
-
-        $this->assertEquals(Crawler::class, get_class($results));
-    }
-
-    public function testTheExtractionOfResultsFromExample(): void
-    {
-        $resultClass = new Results();
-
-        $results = $resultClass->extractResults($this->crawler);
-
-        $this->assertEquals($this->expectedArray(), $results);
+        $this->assertIsArray($resultData);
+        $this->assertEquals($this->expectedArray(), $resultData);
     }
 
     private function expectedArray(): array
