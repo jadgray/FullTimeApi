@@ -4,7 +4,7 @@
 A simple tool to help obtain fixture information from the FA Full-Time system. 
 
 ## Requirements
-* PHP >= 7.2
+* PHP >= 8.1
 
 ## Installation
     composer require jadgray/full-time-api
