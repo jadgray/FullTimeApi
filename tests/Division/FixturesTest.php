@@ -4,14 +4,11 @@ namespace Division;
 
 use Jadgray\FullTimeApi\Division\Fixtures;
 use Jadgray\FullTimeApi\FullTimeClient;
-use Mockery;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DomCrawler\Crawler;
 
 class FixturesTest extends TestCase
 {
-
     /**
      * @throws Exception
      */

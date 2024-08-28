@@ -39,7 +39,7 @@ class Fixtures
         foreach ($rows as $row) {
             $fixture = $this->extractFixtureFromRow($xpath, $row);
 
-            if (!empty($fixture)) {
+            if ( ! empty($fixture)) {
                 $fixtures[] = $fixture;
             }
         }
@@ -51,8 +51,6 @@ class Fixtures
     {
         $cells = $xpath->query('td', $row);
 
-        return array_map(static function ($cell) {
-            return StringHelper::removeWhitespace($cell->textContent);
-        }, iterator_to_array($cells));
+        return array_map(static fn ($cell) => StringHelper::removeWhitespace($cell->textContent), iterator_to_array($cells));
     }
 }

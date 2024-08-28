@@ -15,7 +15,7 @@ class FullTimeClient
 
         if ($response === false) {
             $error = error_get_last();
-            $message = $error['message'] ?? "Failed to fetch data from $url";
+            $message = $error['message'] ?? "Failed to fetch data from {$url}";
             throw new RuntimeException($message);
         }
 
@@ -24,7 +24,7 @@ class FullTimeClient
 
     private function buildUrl(string $url, array $params): string
     {
-        if (!empty($params)) {
+        if ( ! empty($params)) {
             $queryString = http_build_query($params);
             $url .= '?' . $queryString;
         }

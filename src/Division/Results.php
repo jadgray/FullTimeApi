@@ -24,7 +24,8 @@ class Results
                 $seasonId,
                 $groupId,
                 $groupId
-            ));
+            )
+        );
 
         return $this->extractResults($data);
     }

@@ -48,7 +48,7 @@ class FixtureFormatter
 
         foreach ($fixtures as $fixture) {
 
-            if (!$includeCupFixtures && $fixture[0] === 'Cup') {
+            if ( ! $includeCupFixtures && $fixture[0] === 'Cup') {
                 continue;
             }
 
