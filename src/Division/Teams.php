@@ -2,45 +2,42 @@
 
 namespace Jadgray\FullTimeApi\Division;
 
-use Goutte\Client;
-use Symfony\Component\DomCrawler\Crawler;
+use Jadgray\FullTimeApi\FullTimeClient;
+use Jadgray\FullTimeApi\Helpers\StringHelper;
+use Jadgray\FullTimeApi\Traits\XpathTrait;
 
 class Teams
 {
-    /**
-     * @var Client
-     */
-    private $client;
+    use XpathTrait;
 
-    public function __construct()
+    public function __construct(private readonly FullTimeClient $client)
     {
-        $this->client = new Client();
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupID
-     * @return Crawler
-     */
-    public function getTeams(int $seasonId, string $groupID): Crawler
+    public function getTeams(int $seasonId, string $groupID): array
     {
-        return
-            $this->client->request(
-                'GET',
-                sprintf(
-                    'https://fulltime.thefa.com/fixtures.html?selectedSeason=%s&selectedFixtureGroupKey=%s&selectedDateCode=all&selectedRelatedFixtureOption=1&itemsPerPage=100',
-                    $seasonId,
-                    $groupID
-                )
-            );
+        $data = $this->client->get(
+            sprintf(
+                'https://fulltime.thefa.com/fixtures.html?selectedSeason=%s&selectedFixtureGroupKey=%s&selectedDateCode=all&selectedRelatedFixtureOption=1&itemsPerPage=100',
+                $seasonId,
+                $groupID
+            )
+        );
+
+        return $this->extractTeams($data);
     }
 
-    /**
-     * @param Crawler $teams
-     * @return array
-     */
-    public function extractTeams(Crawler $teams): array
+    public function extractTeams(string $data): array
     {
-        return $teams->filterXPath('//*[@id="form1_selectedTeam"]')->children()->each(fn ($team) => $team->filter('option')->each(fn ($option) => trim($option->text())));
+        $xpath = $this->createDomXPath($data);
+
+        $teams = [];
+        $teamNodes = $xpath->query('//*[@id="form1_selectedTeam"]/option');
+
+        foreach ($teamNodes as $teamNode) {
+            $teams[] = StringHelper::removeWhitespace($teamNode->textContent);
+        }
+
+        return $teams;
     }
 }
