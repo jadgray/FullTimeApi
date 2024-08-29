@@ -14,10 +14,7 @@ class ResultFormatterTest extends TestCase
     {
         $resultFormatter = new ResultFormatter();
 
-        $this->assertEquals(
-            $this->getFormattedResults(),
-            $resultFormatter->formatResults($this->getUnFormattedResults())
-        );
+        $this->assertEquals($this->getFormattedResults(), $resultFormatter->formatResults($this->getUnFormattedResults()));
     }
 
     /**

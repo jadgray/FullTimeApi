@@ -14,10 +14,7 @@ class FixtureFormatterTest extends TestCase
     {
         $fixtureFormatter = new FixtureFormatter();
 
-        $this->assertEquals(
-            $this->getFormattedFixtures(),
-            $fixtureFormatter->formatFixtures($this->getUnFormattedFixtures())
-        );
+        $this->assertEquals($this->getFormattedFixtures(), $fixtureFormatter->formatFixtures($this->getUnFormattedFixtures()));
     }
 
     /**

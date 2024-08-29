@@ -3,42 +3,22 @@
 namespace Jadgray\FullTimeApi\DataFormatters;
 
 use Carbon\Carbon;
+use Jadgray\FullTimeApi\Enum\DateTypes;
 
 class ResultFormatter
 {
-    public const DEFAULT_DATE_FORMAT = 'd/m/Y';
-    public const DEFAULT_TIME_FORMAT = 'H:i';
-    public const FULL_TIME_DATE_FORMAT = 'd/m/y H:i';
-
-    private $results;
-    private $timeFormat;
-    private $dateFormat;
-
-    /**
-     * @param string|null $carbonDateFormat
-     * @param string|null $carbonTimeFormat
-     */
-    public function __construct(string $carbonDateFormat = null, string $carbonTimeFormat = null)
+    public function formatResults(array $results, string $carbonDateFormat = null, string $carbonTimeFormat = null): array
     {
-        $this->dateFormat = $carbonDateFormat ?: self::DEFAULT_DATE_FORMAT;
-        $this->timeFormat = $carbonTimeFormat ?: self::DEFAULT_TIME_FORMAT;
-        $this->results = [];
-    }
+        $formattedResults = [];
 
-    /**
-     * @param array $results
-     * @return array
-     */
-    public function formatResults(array $results): array
-    {
         foreach ($results as $result) {
-            $fixtureDate = Carbon::createFromFormat(self::FULL_TIME_DATE_FORMAT, $result[0])->format($this->dateFormat);
-            $fixtureTime = Carbon::createFromFormat(self::FULL_TIME_DATE_FORMAT, $result[0])->format($this->timeFormat);
+            $fixtureDate = Carbon::createFromFormat(DateTypes::FULL_TIME_DATE->value, $result[0])->format($carbonDateFormat ?? DateTypes::DATE->value);
+            $fixtureTime = Carbon::createFromFormat(DateTypes::FULL_TIME_DATE->value, $result[0])->format($carbonTimeFormat ?? DateTypes::TIME->value);
 
             preg_match('/(\d+)/', $result[2], $homeScore);
             preg_match('/(\d+)(?!.*\d)/', $result[2], $awayScore);
 
-            $this->results[] = [
+            $formattedResults[] = [
                 'Date' => $fixtureDate,
                 'Time' => $fixtureTime,
                 'Home' => $result[1],
@@ -49,6 +29,7 @@ class ResultFormatter
             ];
 
         }
-        return $this->results;
+
+        return $formattedResults;
     }
 }
