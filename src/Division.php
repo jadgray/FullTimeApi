@@ -10,106 +10,60 @@ use Jadgray\FullTimeApi\Division\Teams;
 
 class Division
 {
-    /**
-     * @var Teams
-     */
-    private $teams;
-
-    /**
-     * @var Fixtures
-     */
-    private $fixtures;
-
-    /**
-     * @var Results
-     */
-    private $results;
+    private readonly ResultFormatter $formatter;
+    private readonly Teams $teams;
+    private readonly Fixtures $fixtures;
+    private readonly Results $results;
 
     public function __construct()
     {
-        $this->teams = new Teams();
-        $this->fixtures = new Fixtures();
-        $this->results = new Results();
+        $fullTimeClient = new FullTimeClient();
+
+        $this->formatter = new ResultFormatter();
+        $this->teams = new Teams($fullTimeClient);
+        $this->fixtures = new Fixtures($fullTimeClient);
+        $this->results = new Results($fullTimeClient);
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @return array
-     */
     public function getTeams(int $seasonId, string $groupId): array
     {
-        $teams = $this->teams->getTeams($seasonId, $groupId);
-
-        return $this->teams->extractTeams($teams);
+        return $this->teams->getTeams($seasonId, $groupId);
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @return array
-     */
     public function getFixtures(int $seasonId, string $groupId): array
     {
-        $fixtures = $this->fixtures->getFixtures($seasonId, $groupId);
-
-        return $this->fixtures->extractFixtures($fixtures);
+        return $this->fixtures->getFixtures($seasonId, $groupId);
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @param string|null $carbonDateFormat
-     * @param string|null $carbonTimeFormat
-     * @param bool $includeTbcFixtures
-     * @param bool $includeCupFixtures
-     * @return array
-     */
+    public function getResults(int $seasonId, string $groupId): array
+    {
+        return $this->results->getResults($seasonId, $groupId);
+    }
+
     public function getFormattedFixtures(
         int    $seasonId,
         string $groupId,
+        FixtureFormatter $formatter,
         bool   $includeTbcFixtures = true,
         bool   $includeCupFixtures = true,
         string $carbonDateFormat = null,
         string $carbonTimeFormat = null
-    ): array
-    {
-        $fixtures = $this->fixtures->getFixtures($seasonId, $groupId);
-
-        return (new FixtureFormatter($carbonDateFormat, $carbonTimeFormat))->formatFixtures(
-                $this->fixtures->extractFixtures($fixtures),
-                $includeTbcFixtures,
-                $includeCupFixtures
+    ): array {
+        return $formatter->formatFixtures(
+            $this->fixtures->getFixtures($seasonId, $groupId),
+            $includeTbcFixtures,
+            $includeCupFixtures,
+            $carbonDateFormat,
+            $carbonTimeFormat
         );
     }
 
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @return array
-     */
-    public function getResults(int $seasonId, string $groupId): array
-    {
-        $results = $this->results->getResults($seasonId, $groupId);
-
-        return $this->results->extractResults($results);
-    }
-
-    /**
-     * @param int $seasonId
-     * @param string $groupId
-     * @param string|null $carbonDateFormat
-     * @param string|null $carbonTimeFormat
-     * @return array
-     */
     public function getFormattedResults(
         int    $seasonId,
         string $groupId,
         string $carbonDateFormat = null,
-        string $carbonTimeFormat = null): array
-    {
-        $results = $this->results->getResults($seasonId, $groupId);
-
-        return (new ResultFormatter($carbonDateFormat, $carbonTimeFormat))->formatResults($this->results->extractResults($results));
+        string $carbonTimeFormat = null
+    ): array {
+        return $this->formatter->formatResults($this->results->getResults($seasonId, $groupId), $carbonDateFormat, $carbonTimeFormat);
     }
 }
